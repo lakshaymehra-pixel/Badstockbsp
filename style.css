@@ -421,12 +421,15 @@ img { max-width: 100%; }
   border-radius: 4px; margin: 0 auto 48px;
 }
 .t-slider-wrap { overflow: hidden; }
-.t-slider {
-  display: flex; transition: transform 0.5s ease;
+.t-track {
+  display: flex;
+  transition: transform 0.5s ease;
+  will-change: transform;
 }
-.t-slide {
-  min-width: 100%; display: grid;
-  grid-template-columns: repeat(3, 1fr); gap: 24px;
+.t-track .t-new-card {
+  flex-shrink: 0;
+  box-sizing: border-box;
+  margin-right: 20px;
 }
 .t-new-card {
   background: rgba(255,255,255,0.08);
@@ -542,6 +545,7 @@ img { max-width: 100%; }
   .features-grid { grid-template-columns: 1fr 1fr; }
   .stats-inner { grid-template-columns: repeat(2, 1fr); }
   .testimonials-grid { grid-template-columns: 1fr; }
+  .t-slide { grid-template-columns: 1fr; gap: 16px; }
   .form-row { grid-template-columns: 1fr; }
   .hero-cta-group { flex-direction: column; }
   .btn-lg { width: 100%; text-align: center; }
@@ -552,4 +556,6 @@ img { max-width: 100%; }
   .features-grid { grid-template-columns: 1fr; }
   .section { padding: 56px 0; }
   .apply-form { padding: 24px 20px; }
+  .t-slide { grid-template-columns: 1fr; gap: 12px; }
+  .t-new-card { padding: 20px; }
 }

@@ -119,6 +119,7 @@ document.querySelectorAll('a[href^="#"]').forEach(link => {
 
 // ========== STEP CARDS ANIMATION ==========
 const stepCards = document.querySelectorAll('.step-card');
+const isMobile = window.innerWidth <= 768;
 
 function typewriterText(el, text, cb) {
   el.textContent = '';
@@ -134,13 +135,19 @@ function animateCardSequence(cards, index) {
   if (index >= cards.length) return;
   const card = cards[index];
 
-  // Step 1: card slides in
   card.classList.add('animate-in');
 
   const h3 = card.querySelector('h3');
   const p  = card.querySelector('p');
   const h3Text = h3.textContent;
   const pText  = p.textContent;
+
+  if (isMobile) {
+    p.style.opacity = '1';
+    setTimeout(() => animateCardSequence(cards, index + 1), 0);
+    return;
+  }
+
   h3.textContent = '';
   p.textContent  = '';
   p.style.opacity = '0';
@@ -158,35 +165,89 @@ function animateCardSequence(cards, index) {
   }, 500);
 }
 
-const stepsObserver = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      animateCardSequence(Array.from(stepCards), 0);
-      stepsObserver.disconnect();
-    }
-  });
-}, { threshold: 0.2 });
-
 const stepsSection = document.querySelector('#how-it-works');
-if (stepsSection) stepsObserver.observe(stepsSection);
 
-// ========== TESTIMONIAL SLIDER ==========
-let currentSlide = 0;
-const totalSlides = 2;
-
-function goToSlide(index) {
-  currentSlide = index;
-  const slider = document.getElementById('tSlider');
-  if (slider) slider.style.transform = `translateX(-${index * 100}%)`;
-  document.querySelectorAll('.t-dot').forEach((d, i) => {
-    d.classList.toggle('active', i === index);
+if (window.innerWidth > 768 && stepsSection) {
+  const stepsObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        animateCardSequence(Array.from(stepCards), 0);
+        stepsObserver.disconnect();
+      }
+    });
+  }, { threshold: 0.2 });
+  stepsObserver.observe(stepsSection);
+} else {
+  // Mobile: show all cards with full content, no animation
+  stepCards.forEach(card => {
+    card.classList.add('animate-in');
+    const h3 = card.querySelector('h3');
+    const p = card.querySelector('p');
+    if (p) p.style.opacity = '1';
   });
 }
 
-// Auto slide every 4 seconds
-setInterval(() => {
-  goToSlide((currentSlide + 1) % totalSlides);
-}, 4000);
+// ========== TESTIMONIAL SLIDER ==========
+(function() {
+  const wrap = document.querySelector('.t-slider-wrap');
+  const track = document.getElementById('tSlider');
+  const dotsContainer = document.getElementById('tDots');
+  if (!track || !dotsContainer || !wrap) return;
+
+  const cards = Array.from(track.querySelectorAll('.t-new-card'));
+  const total = cards.length;
+  let current = 0;
+  const gap = 20;
+
+  function getPerPage() {
+    return window.innerWidth <= 768 ? 1 : 3;
+  }
+
+  function setCardWidths() {
+    const perPage = getPerPage();
+    const wrapWidth = wrap.offsetWidth;
+    const cardW = (wrapWidth - gap * (perPage - 1)) / perPage;
+    cards.forEach(c => {
+      c.style.width = cardW + 'px';
+      c.style.minWidth = cardW + 'px';
+    });
+  }
+
+  function totalPages() {
+    return Math.ceil(total / getPerPage());
+  }
+
+  function buildDots() {
+    dotsContainer.innerHTML = '';
+    for (let i = 0; i < totalPages(); i++) {
+      const d = document.createElement('button');
+      d.className = 't-dot' + (i === 0 ? ' active' : '');
+      d.addEventListener('click', () => goTo(i));
+      dotsContainer.appendChild(d);
+    }
+  }
+
+  function goTo(index) {
+    const pages = totalPages();
+    current = (index + pages) % pages;
+    const perPage = getPerPage();
+    const cardW = cards[0].offsetWidth + gap;
+    track.style.transform = `translateX(-${current * perPage * cardW}px)`;
+    dotsContainer.querySelectorAll('.t-dot').forEach((d, i) => {
+      d.classList.toggle('active', i === current);
+    });
+  }
+
+  function init() {
+    setCardWidths();
+    buildDots();
+    goTo(0);
+  }
+
+  init();
+  window.addEventListener('resize', init);
+  setInterval(() => goTo(current + 1), 4000);
+})();
 
 // ========== COUNTER ANIMATION ==========
 function animateCounters() {
