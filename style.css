@@ -502,7 +502,8 @@ img { max-width: 100%; }
 .footer-brand p { font-size: 14px; color: #9ca3af; line-height: 1.7; margin-bottom: 16px; }
 .footer-phone { color: var(--primary); font-weight: 600; font-size: 15px; }
 .footer-links h4 { color: #fff; font-size: 15px; font-weight: 700; margin-bottom: 16px; }
-.footer-links a { display: block; font-size: 14px; color: #9ca3af; margin-bottom: 10px; transition: color 0.2s; }
+.footer-links a,
+.footer-links span { display: block; font-size: 14px; color: #9ca3af; margin-bottom: 10px; }
 .footer-links a:hover { color: #fff; }
 .footer-bottom { border-top: 1px solid #1e1e3a; padding: 20px 24px; text-align: center; }
 .footer-bottom p { font-size: 13px; color: #6b7280; }
