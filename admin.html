@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Panel — Baid Stock Broking</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Inter',sans-serif;background:#f1f5f9;color:#1e293b;min-height:100vh}
+    a{text-decoration:none;color:inherit}
+
+    /* LOGIN */
+    .login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#0f2d87,#1a6ef5)}
+    .login-box{background:#fff;border-radius:20px;padding:48px 40px;width:100%;max-width:400px;box-shadow:0 20px 60px rgba(0,0,0,0.2)}
+    .login-logo{font-size:22px;font-weight:900;margin-bottom:8px;color:#0f172a}.login-logo span{color:#1a6ef5}
+    .login-sub{font-size:14px;color:#64748b;margin-bottom:32px}
+    .login-box label{display:block;font-size:13px;font-weight:600;color:#374151;margin-bottom:6px}
+    .login-box input{width:100%;padding:12px 16px;border:2px solid #e2e8f0;border-radius:10px;font-size:15px;font-family:inherit;outline:none;transition:border-color .2s}
+    .login-box input:focus{border-color:#1a6ef5}
+    .login-btn{width:100%;padding:14px;background:#1a6ef5;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;margin-top:20px;font-family:inherit;transition:background .2s}
+    .login-btn:hover{background:#1253c2}
+    .login-err{color:#ef4444;font-size:13px;margin-top:10px;display:none}
+
+    /* LAYOUT */
+    .app{display:none;min-height:100vh}
+    .sidebar{width:240px;background:#0f172a;min-height:100vh;position:fixed;top:0;left:0;z-index:100;display:flex;flex-direction:column}
+    .sidebar-logo{padding:24px 20px;border-bottom:1px solid rgba(255,255,255,0.08)}
+    .sidebar-logo .brand{font-size:16px;font-weight:800;color:#fff}.sidebar-logo .brand span{color:#60a5fa}
+    .sidebar-logo .sub{font-size:11px;color:rgba(255,255,255,0.4);margin-top:2px}
+    .sidebar-nav{padding:16px 12px;flex:1;overflow-y:auto;overflow-x:hidden}
+    .nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;color:rgba(255,255,255,0.6);font-size:14px;font-weight:500;transition:all .2s;margin-bottom:2px}
+    .nav-item:hover{background:rgba(255,255,255,0.06);color:#fff}
+    .nav-item.active{background:#1a6ef5;color:#fff}
+    .nav-item .icon{width:18px;height:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .nav-item .icon svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+    .sidebar-footer{padding:16px;border-top:1px solid rgba(255,255,255,0.08)}
+    .deploy-btn{width:100%;padding:10px;background:linear-gradient(135deg,#16a34a,#22c55e);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit}
+    .main{margin-left:240px;padding:32px;flex:1;min-width:0;width:calc(100% - 240px)}
+    .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:32px}
+    .topbar h1{font-size:24px;font-weight:800;color:#0f172a}
+    .topbar .save-btn{padding:10px 24px;background:#1a6ef5;color:#fff;border:none;border-radius:50px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s}
+    .topbar .save-btn:hover{background:#1253c2;transform:translateY(-1px)}
+    .topbar .save-btn.saving{background:#64748b}
+    .save-toast{position:fixed;bottom:24px;right:24px;background:#16a34a;color:#fff;padding:14px 24px;border-radius:12px;font-weight:600;font-size:14px;box-shadow:0 8px 24px rgba(22,163,74,0.3);display:none;z-index:9999}
+    .save-toast.show{display:block;animation:slideUp .3s ease}
+    @keyframes slideUp{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+
+    /* SECTIONS */
+    .section{display:none}.section.active{display:block}
+    .card{background:#fff;border-radius:16px;padding:28px;margin-bottom:20px;border:1px solid #e2e8f0}
+    .card-title{font-size:16px;font-weight:700;color:#0f172a;margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;gap:8px}
+    .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+    .field{margin-bottom:16px}
+    .field label{display:block;font-size:12px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+    .field input,.field textarea,.field select{width:100%;padding:10px 14px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:14px;font-family:inherit;color:#1e293b;outline:none;transition:border-color .2s;background:#fff}
+    .field input:focus,.field textarea:focus{border-color:#1a6ef5}
+    .field textarea{resize:vertical;min-height:80px}
+    .field .hint{font-size:11px;color:#94a3b8;margin-top:4px}
+
+    /* PRODUCT CARDS */
+    .product-admin-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    .product-admin-card{background:#f8faff;border:1.5px solid #e2e8f0;border-radius:12px;padding:20px}
+    .product-admin-card .card-num{font-size:11px;font-weight:700;color:#1a6ef5;text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px}
+
+    /* FAQ */
+    .faq-admin-item{background:#f8faff;border:1.5px solid #e2e8f0;border-radius:12px;padding:20px;margin-bottom:12px;position:relative}
+    .faq-admin-item .faq-num{font-size:11px;font-weight:700;color:#64748b;margin-bottom:10px}
+    .faq-del{position:absolute;top:16px;right:16px;width:28px;height:28px;border-radius:50%;background:#fee2e2;color:#ef4444;border:none;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;font-weight:700}
+    .add-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 18px;background:#eff6ff;color:#1a6ef5;border:1.5px dashed #1a6ef5;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;font-family:inherit;margin-top:8px;transition:all .2s}
+    .add-btn:hover{background:#dbeafe}
+
+    /* CALC SETTINGS */
+    .calc-product-card{background:#f8faff;border:1.5px solid #e2e8f0;border-radius:12px;padding:20px;margin-bottom:12px}
+    .calc-product-card h4{font-size:13px;font-weight:700;color:#0f172a;margin-bottom:14px}
+
+    /* ELIGIBILITY */
+    .elig-item{background:#f8faff;border:1.5px solid #e2e8f0;border-radius:12px;padding:16px;margin-bottom:10px;position:relative;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .elig-del{position:absolute;top:12px;right:12px;width:26px;height:26px;border-radius:50%;background:#fee2e2;color:#ef4444;border:none;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;font-weight:700}
+
+    /* DASHBOARD */
+    .stat-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
+    .stat-card{background:#fff;border-radius:12px;padding:20px;border:1px solid #e2e8f0}
+    .stat-card .s-label{font-size:12px;color:#64748b;font-weight:500;margin-bottom:8px}
+    .stat-card .s-val{font-size:24px;font-weight:800;color:#0f172a}
+    .stat-card .s-val span{font-size:13px;color:#1a6ef5;font-weight:600}
+    .info-box{background:#eff6ff;border:1px solid #bfdbfe;border-radius:12px;padding:20px;margin-bottom:20px}
+    .info-box h3{font-size:15px;font-weight:700;color:#1e40af;margin-bottom:8px}
+    .info-box p{font-size:13px;color:#3730a3;line-height:1.6}
+    .info-box code{background:#dbeafe;padding:2px 8px;border-radius:4px;font-family:monospace;font-size:13px}
+  </style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="login-wrap" id="loginWrap">
+  <div class="login-box">
+    <div class="login-logo">Baid <span>Stock</span> Admin</div>
+    <div class="login-sub">Enter password to access the admin panel</div>
+    <div class="field">
+      <label>Admin Password</label>
+      <input type="password" id="passInput" placeholder="Enter password..." onkeydown="if(event.key==='Enter')doLogin()"/>
+    </div>
+    <button class="login-btn" onclick="doLogin()">Login →</button>
+    <div class="login-err" id="loginErr">Wrong password. Try again.</div>
+  </div>
+</div>
+
+<!-- APP -->
+<div class="app" id="app">
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-logo">
+      <div class="brand">Baid <span>Stock</span></div>
+      <div class="sub">Admin Panel</div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-item active" onclick="showSection('dashboard')"><span class="icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></span> Dashboard</div>
+      <div class="nav-item" onclick="showSection('company')"><span class="icon"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span> Company Info</div>
+      <div class="nav-item" onclick="showSection('hero')"><span class="icon"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span> Hero Section</div>
+      <div class="nav-item" onclick="showSection('products')"><span class="icon"><svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg></span> Products</div>
+      <div class="nav-item" onclick="showSection('fft')"><span class="icon"><svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></span> Fast/Paperless/Trusted</div>
+      <div class="nav-item" onclick="showSection('steps')"><span class="icon"><svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></span> Steps</div>
+      <div class="nav-item" onclick="showSection('features')"><span class="icon"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span> Why Choose Us</div>
+      <div class="nav-item" onclick="showSection('testimonials')"><span class="icon"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span> Testimonials</div>
+      <div class="nav-item" onclick="showSection('footersec')"><span class="icon"><svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></span> Footer</div>
+      <div class="nav-item" onclick="showSection('faq')"><span class="icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span> FAQ</div>
+      <div class="nav-item" onclick="showSection('eligibility')"><span class="icon"><svg viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span> Eligibility</div>
+    </nav>
+    <div class="sidebar-footer">
+      <button class="deploy-btn" onclick="window.open('https://baidstock-loans.vercel.app','_blank')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px;vertical-align:middle"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        View Live Site
+      </button>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="topbar">
+      <h1 id="sectionTitle">Dashboard</h1>
+      <button class="save-btn" id="saveBtn" onclick="saveAll()">💾 Save Changes</button>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div class="section active" id="sec-dashboard">
+      <div class="stat-cards">
+        <div class="stat-card"><div class="s-label">Products</div><div class="s-val" id="d-products">4</div></div>
+        <div class="stat-card"><div class="s-label">FAQ Items</div><div class="s-val" id="d-faq">6</div></div>
+        <div class="stat-card"><div class="s-label">Eligibility Criteria</div><div class="s-val" id="d-elig">5</div></div>
+        <div class="stat-card"><div class="s-label">Last Saved</div><div class="s-val" style="font-size:14px" id="d-saved">—</div></div>
+      </div>
+      <div class="info-box">
+        <h3>📋 How to update the live website</h3>
+        <p>
+          1. Make your changes in any section using the sidebar.<br/>
+          2. Click <strong>💾 Save Changes</strong> button.<br/>
+          3. Changes go live on <code>https://baidstock-loans.vercel.app</code> <strong>instantly</strong> — no redeploy needed!
+        </p>
+      </div>
+      <div class="card">
+        <div class="card-title">✅ How it works</div>
+        <p style="font-size:14px;color:#64748b;line-height:1.8">
+          Changes are saved to <strong>Supabase database</strong>. The live website fetches content from the database automatically on every page load — so changes are <strong>instant</strong>.
+        </p>
+      </div>
+    </div>
+
+    <!-- COMPANY INFO -->
+    <div class="section" id="sec-company">
+      <div class="card">
+        <div class="card-title">🏢 Company Information</div>
+        <div class="grid-2">
+          <div class="field"><label>Company Name</label><input type="text" id="c-name"/></div>
+          <div class="field"><label>Tagline</label><input type="text" id="c-tagline"/></div>
+          <div class="field"><label>Phone Number</label><input type="text" id="c-phone"/></div>
+          <div class="field"><label>Address</label><input type="text" id="c-address"/></div>
+        </div>
+        <div class="field"><label>Footer Description</label><textarea id="c-footerDesc" rows="3"></textarea></div>
+      </div>
+    </div>
+
+    <!-- HERO -->
+    <div class="section" id="sec-hero">
+      <div class="card">
+        <div class="card-title">✨ Hero Section</div>
+        <div class="field"><label>Badge Text</label><input type="text" id="h-badge"/></div>
+        <div class="grid-3">
+          <div class="field"><label>Title (Part 1)</label><input type="text" id="h-title"/></div>
+          <div class="field"><label>Title Highlight (Blue)</label><input type="text" id="h-titleHighlight"/></div>
+          <div class="field"><label>Title Suffix</label><input type="text" id="h-titleSuffix"/></div>
+        </div>
+        <div class="field"><label>Subtitle / Description</label><textarea id="h-subtitle" rows="3"></textarea></div>
+        <div class="field"><label>Bottom Note</label><input type="text" id="h-note"/></div>
+      </div>
+    </div>
+
+    <!-- PRODUCTS -->
+    <div class="section" id="sec-products">
+      <div class="product-admin-grid" id="productsAdminGrid"></div>
+    </div>
+
+    <!-- CALCULATOR -->
+    <div class="section" id="sec-calculator">
+      <div class="card">
+        <div class="card-title">🧮 Calculator Settings</div>
+        <p style="font-size:13px;color:#64748b;margin-bottom:20px">These settings control the loan calculator on the homepage. <strong>Rate</strong> is daily interest rate (e.g. 0.00067 = 0.067% per day). <strong>Salary Multiplier</strong> determines max loan from salary (e.g. 0.8 = 80% of salary).</p>
+        <div id="calcAdminCards"></div>
+      </div>
+    </div>
+
+    <!-- STEPS -->
+    <div class="section" id="sec-steps">
+      <div class="card">
+        <div class="card-title">🪜 Loan Process Steps</div>
+        <div id="stepsAdminList"></div>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="section" id="sec-footersec">
+      <div class="card">
+        <div class="card-title">🏢 Footer Brand</div>
+        <div class="grid-2">
+          <div class="field"><label>Company Name</label><input type="text" id="fc-name"/></div>
+          <div class="field"><label>Phone Number</label><input type="text" id="fc-phone"/></div>
+        </div>
+        <div class="field"><label>Footer Description</label><textarea id="fc-desc" rows="3"></textarea></div>
+      </div>
+      <div class="card">
+        <div class="card-title">🔗 Quick Links</div>
+        <div id="footerQLAdmin"></div>
+        <button class="add-btn" onclick="addFooterQL()">+ Add Link</button>
+      </div>
+      <div class="card">
+        <div class="card-title">⚖️ Legal Links</div>
+        <div id="footerLegalAdmin"></div>
+        <button class="add-btn" onclick="addFooterLegal()">+ Add Legal Link</button>
+      </div>
+      <div class="card">
+        <div class="card-title">🌍 Service Area &amp; Copyright</div>
+        <div class="field"><label>Service Area</label><input type="text" id="f-serviceArea"/></div>
+        <div class="field"><label>Copyright Text</label><textarea id="f-copyright" rows="2"></textarea></div>
+      </div>
+    </div>
+
+    <!-- TESTIMONIALS -->
+    <div class="section" id="sec-testimonials">
+      <div class="card">
+        <div class="card-title">💬 Customer Testimonials</div>
+        <div id="testimonialsAdminList"></div>
+        <button class="add-btn" onclick="addTestimonial()">+ Add Testimonial</button>
+      </div>
+    </div>
+
+    <!-- FFT -->
+    <div class="section" id="sec-fft">
+      <div class="card">
+        <div class="card-title">⚡ Fast / Paperless / Trusted Banners</div>
+        <div class="product-admin-grid" id="fftAdminGrid"></div>
+      </div>
+    </div>
+
+    <!-- WHY CHOOSE US -->
+    <div class="section" id="sec-features">
+      <div class="card">
+        <div class="card-title">⭐ Why Choose Us</div>
+        <div class="product-admin-grid" id="featuresAdminGrid"></div>
+      </div>
+    </div>
+
+    <!-- FAQ -->
+    <div class="section" id="sec-faq">
+      <div class="card">
+        <div class="card-title">❓ Frequently Asked Questions</div>
+        <div id="faqAdminList"></div>
+        <button class="add-btn" onclick="addFaq()">+ Add Question</button>
+      </div>
+    </div>
+
+    <!-- ELIGIBILITY -->
+    <div class="section" id="sec-eligibility">
+      <div class="card">
+        <div class="card-title">✅ Eligibility Criteria (Checklist)</div>
+        <div id="eligAdminList"></div>
+        <button class="add-btn" onclick="addElig()">+ Add Criteria</button>
+      </div>
+      <div class="card">
+        <div class="card-title">🪪 Eligibility Card (Right Side)</div>
+        <div class="grid-2">
+          <div class="field"><label>Card Label</label><input type="text" id="ec-label"/></div>
+          <div class="field"><label>Card Sub-title</label><input type="text" id="ec-sub"/></div>
+        </div>
+        <div class="field"><label>Loan Amount</label><input type="text" id="ec-amount" placeholder="e.g. ₹5,000 – ₹1 Lakh"/></div>
+        <div class="grid-2">
+          <div class="field"><label>Stat 1 Value</label><input type="text" id="ec-s1v"/></div>
+          <div class="field"><label>Stat 1 Label</label><input type="text" id="ec-s1k"/></div>
+          <div class="field"><label>Stat 2 Value</label><input type="text" id="ec-s2v"/></div>
+          <div class="field"><label>Stat 2 Label</label><input type="text" id="ec-s2k"/></div>
+          <div class="field"><label>Stat 3 Value</label><input type="text" id="ec-s3v"/></div>
+          <div class="field"><label>Stat 3 Label</label><input type="text" id="ec-s3k"/></div>
+          <div class="field"><label>Stat 4 Value</label><input type="text" id="ec-s4v"/></div>
+          <div class="field"><label>Stat 4 Label</label><input type="text" id="ec-s4k"/></div>
+        </div>
+        <div class="field"><label>Footer Text</label><input type="text" id="ec-footer"/></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="save-toast" id="saveToast">✅ Changes saved to data.json!</div>
+
+<script>
+let cfg = {};
+let adminPass = '';
+
+async function doLogin() {
+  const pass = document.getElementById('passInput').value;
+  if (!pass) return;
+  adminPass = pass;
+  try {
+    const res = await fetch('/api/config');
+    if (!res.ok) throw new Error('API error');
+    cfg = await res.json();
+    if (!cfg || !Object.keys(cfg).length) {
+      // Supabase not set up yet — load from data.json as fallback
+      const r2 = await fetch('/data.json');
+      cfg = await r2.json();
+    }
+    document.getElementById('loginWrap').style.display = 'none';
+    document.getElementById('app').style.display = 'flex';
+    populateAll();
+  } catch(e) {
+    document.getElementById('loginErr').style.display = 'block';
+    document.getElementById('loginErr').textContent = 'Could not load config. Check Supabase env vars on Vercel.';
+  }
+}
+
+function showSection(name) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('sec-' + name).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => {
+    if (n.textContent.toLowerCase().includes(name === 'dashboard' ? 'dash' : name === 'company' ? 'company' : name === 'hero' ? 'hero' : name === 'products' ? 'product' : name === 'fft' ? 'fast' : name === 'steps' ? 'step' : name === 'features' ? 'why' : name === 'testimonials' ? 'test' : name === 'footersec' ? 'footer' : name === 'faq' ? 'faq' : 'elig')) {
+      n.classList.add('active');
+    }
+  });
+  const titles = { dashboard:'Dashboard', company:'Company Info', hero:'Hero Section', products:'Products', fft:'Fast/Paperless/Trusted', steps:'Loan Process Steps', features:'Why Choose Us', testimonials:'Testimonials', footersec:'Footer', faq:'FAQ', eligibility:'Eligibility Criteria' };
+  document.getElementById('sectionTitle').textContent = titles[name] || name;
+}
+
+function v(id) { return document.getElementById(id)?.value || ''; }
+function decodeHtml(str) { const t = document.createElement('textarea'); t.innerHTML = str || ''; return t.value; }
+function set(id, val) { const el = document.getElementById(id); if (el) el.value = decodeHtml(val); }
+
+function populateAll() {
+  // Company
+  set('c-name', cfg.company?.name);
+  set('c-tagline', cfg.company?.tagline);
+  set('c-phone', cfg.company?.phone);
+  set('c-address', cfg.company?.address);
+  set('c-footerDesc', cfg.company?.footerDesc);
+
+  // Hero
+  set('h-badge', cfg.hero?.badge);
+  set('h-title', cfg.hero?.title);
+  set('h-titleHighlight', cfg.hero?.titleHighlight);
+  set('h-titleSuffix', cfg.hero?.titleSuffix);
+  set('h-subtitle', cfg.hero?.subtitle);
+  set('h-note', cfg.hero?.note);
+
+  // Elig card
+  const ec = cfg.eligCard || {};
+  ['label','sub','amount','s1v','s1k','s2v','s2k','s3v','s3k','s4v','s4k','footer'].forEach(k => set('ec-' + k, ec[k]));
+
+  // Products
+  renderProductsAdmin();
+  // Footer
+  renderFooterAdmin();
+  // Testimonials
+  renderTestimonialsAdmin();
+  // FFT
+  renderFftAdmin();
+  // Steps
+  renderStepsAdmin();
+  // Features
+  renderFeaturesAdmin();
+  // FAQ
+  renderFaqAdmin();
+  // Eligibility
+  renderEligAdmin();
+
+  // Dashboard stats
+  document.getElementById('d-products').textContent = (cfg.products || []).length;
+  document.getElementById('d-faq').textContent = (cfg.faq || []).length;
+  document.getElementById('d-elig').textContent = (cfg.eligibility || []).length;
+}
+
+function renderProductsAdmin() {
+  const container = document.getElementById('productsAdminGrid');
+  container.innerHTML = '';
+  (cfg.products || []).forEach((p, i) => {
+    container.innerHTML += `
+      <div class="product-admin-card">
+        <div class="card-num">Product ${i+1}</div>
+        <div class="field"><label>Product Name</label><input type="text" id="p-name-${i}" value="${p.name||''}"/></div>
+        <div class="field"><label>Badge Label</label><input type="text" id="p-badge-${i}" value="${p.badge||''}"/></div>
+        <div class="field"><label>Amount Range</label><input type="text" id="p-amount-${i}" value="${p.amount||''}" placeholder="e.g. ₹5,000 – ₹1 Lakh"/></div>
+        <div class="grid-2">
+          <div class="field"><label>Stat Label</label><input type="text" id="p-s1k-${i}" value="${p.stat1Key||''}"/></div>
+          <div class="field"><label>Stat Value</label><input type="text" id="p-s1v-${i}" value="${p.stat1Val||''}"/></div>
+        </div>
+      </div>`;
+  });
+}
+
+function renderCalcAdmin() {
+  const calc = cfg.calculator || {};
+  const labels = { salary: 'Salary Advance', emergency: 'Emergency Loan', personal: 'Personal Loan' };
+  const container = document.getElementById('calcAdminCards');
+  container.innerHTML = '';
+  Object.keys(labels).forEach(key => {
+    const c = calc[key] || {};
+    container.innerHTML += `
+      <div class="calc-product-card">
+        <h4>${labels[key]}</h4>
+        <div class="grid-2" style="grid-template-columns:repeat(4,1fr)">
+          <div class="field"><label>Min Amount (₹)</label><input type="number" id="calc-${key}-min" value="${c.min||''}"/></div>
+          <div class="field"><label>Max Amount (₹)</label><input type="number" id="calc-${key}-max" value="${c.max||''}"/></div>
+          <div class="field"><label>Salary Multiplier</label><input type="number" step="0.1" id="calc-${key}-mult" value="${c.mult||''}"/><div class="hint">e.g. 0.8 = 80% of salary</div></div>
+          <div class="field"><label>Daily Rate</label><input type="number" step="0.00001" id="calc-${key}-rate" value="${c.rate||''}"/><div class="hint">e.g. 0.00067</div></div>
+        </div>
+      </div>`;
+  });
+}
+
+function renderFooterLinks(containerId, arr) {
+  const c = document.getElementById(containerId);
+  if (!c) return;
+  c.innerHTML = '';
+  (arr || []).forEach((l, i) => {
+    c.innerHTML += `
+      <div class="faq-admin-item" style="padding:14px 20px">
+        <button class="faq-del" onclick="delFooterLink('${containerId}',${i})">×</button>
+        <div class="grid-2">
+          <div class="field" style="margin:0"><label>Link Text</label><input type="text" id="${containerId}-t-${i}" value="${(l.text||'').replace(/"/g,'&quot;').replace(/&amp;/g,'&')}"/></div>
+          <div class="field" style="margin:0"><label>URL / Anchor</label><input type="text" id="${containerId}-h-${i}" value="${(l.href||'#')}"/></div>
+        </div>
+      </div>`;
+  });
+}
+
+function renderFooterAdmin() {
+  set('fc-name',  cfg.company?.name);
+  set('fc-phone', cfg.company?.phone);
+  set('fc-desc',  cfg.company?.footerDesc);
+  renderFooterLinks('footerQLAdmin', cfg.footer?.quickLinks);
+  renderFooterLinks('footerLegalAdmin', cfg.footer?.legal);
+  set('f-serviceArea', cfg.footer?.serviceArea);
+  set('f-copyright', cfg.footer?.copyright);
+}
+
+function addFooterQL() {
+  cfg.footer = cfg.footer || {};
+  cfg.footer.quickLinks = cfg.footer.quickLinks || [];
+  cfg.footer.quickLinks.push({ text: 'New Link', href: '#' });
+  renderFooterAdmin();
+}
+
+function addFooterLegal() {
+  cfg.footer = cfg.footer || {};
+  cfg.footer.legal = cfg.footer.legal || [];
+  cfg.footer.legal.push({ text: 'New Legal Link', href: '#' });
+  renderFooterAdmin();
+}
+
+function delFooterLink(containerId, i) {
+  if (containerId === 'footerQLAdmin') cfg.footer.quickLinks.splice(i, 1);
+  else cfg.footer.legal.splice(i, 1);
+  renderFooterAdmin();
+}
+
+function collectFooter(containerId, arr) {
+  return (arr || []).map((_, i) => ({
+    text: document.getElementById(`${containerId}-t-${i}`)?.value || '',
+    href: document.getElementById(`${containerId}-h-${i}`)?.value || '#',
+  }));
+}
+
+function renderTestimonialsAdmin() {
+  const container = document.getElementById('testimonialsAdminList');
+  if (!container) return;
+  container.innerHTML = '';
+  (cfg.testimonials || []).forEach((t, i) => {
+    container.innerHTML += `
+      <div class="faq-admin-item" id="tm-item-${i}">
+        <div class="faq-num">Review ${i + 1}</div>
+        <button class="faq-del" onclick="deleteTestimonial(${i})">×</button>
+        <div class="grid-2">
+          <div class="field"><label>Customer Name</label><input type="text" id="tm-name-${i}" value="${(t.name||'').replace(/"/g,'&quot;')}"/></div>
+          <div class="field"><label>City</label><input type="text" id="tm-city-${i}" value="${(t.city||'').replace(/"/g,'&quot;')}"/></div>
+        </div>
+        <div class="field"><label>Review Text</label><textarea id="tm-text-${i}" rows="3">${t.text||''}</textarea></div>
+        <div class="field"><label>Stars (1–5)</label><input type="number" id="tm-stars-${i}" min="1" max="5" value="${t.stars||5}" style="width:80px"/></div>
+      </div>`;
+  });
+}
+
+function addTestimonial() {
+  cfg.testimonials = cfg.testimonials || [];
+  cfg.testimonials.push({ name: 'Customer Name', city: 'City', stars: 5, text: 'Write review here...' });
+  renderTestimonialsAdmin();
+}
+
+function deleteTestimonial(i) {
+  cfg.testimonials.splice(i, 1);
+  renderTestimonialsAdmin();
+}
+
+function renderFftAdmin() {
+  const grid = document.getElementById('fftAdminGrid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  (cfg.fft || []).forEach((f, i) => {
+    grid.innerHTML += `
+      <div class="product-admin-card">
+        <div class="card-num">Banner ${i + 1}</div>
+        <div class="field"><label>Title</label><input type="text" id="fft-title-${i}" value="${(f.title||'').replace(/"/g,'&quot;')}"/></div>
+        <div class="field"><label>Description</label><textarea id="fft-desc-${i}" rows="2">${f.desc||''}</textarea></div>
+      </div>`;
+  });
+}
+
+function renderFeaturesAdmin() {
+  const grid = document.getElementById('featuresAdminGrid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  (cfg.features || []).forEach((f, i) => {
+    grid.innerHTML += `
+      <div class="product-admin-card" style="position:relative">
+        <div class="card-num">Feature ${i + 1}</div>
+        <div class="field"><label>Title</label><input type="text" id="feat-title-${i}" value="${(f.title||'').replace(/"/g,'&quot;')}"/></div>
+        <div class="field"><label>Description</label><textarea id="feat-desc-${i}" rows="3">${f.desc||''}</textarea></div>
+      </div>`;
+  });
+}
+
+function renderStepsAdmin() {
+  const container = document.getElementById('stepsAdminList');
+  container.innerHTML = '<div class="product-admin-grid" id="stepsInnerGrid"></div>';
+  const grid = document.getElementById('stepsInnerGrid');
+  (cfg.steps || []).forEach((s, i) => {
+    grid.innerHTML += `
+      <div class="product-admin-card" style="position:relative" id="step-item-${i}">
+        <div class="card-num">Step ${i + 1}</div>
+        <button class="faq-del" onclick="deleteStep(${i})">×</button>
+        <div class="field"><label>Title</label><input type="text" id="step-title-${i}" value="${(s.title||'').replace(/"/g,'&quot;')}"/></div>
+        <div class="field"><label>Description</label><textarea id="step-desc-${i}" rows="3">${s.desc||''}</textarea></div>
+      </div>`;
+  });
+}
+
+function addStep() {
+  cfg.steps = cfg.steps || [];
+  cfg.steps.push({ title: 'New Step', desc: 'Description here...' });
+  renderStepsAdmin();
+}
+
+function deleteStep(i) {
+  cfg.steps.splice(i, 1);
+  renderStepsAdmin();
+}
+
+function renderFaqAdmin() {
+  const container = document.getElementById('faqAdminList');
+  container.innerHTML = '';
+  (cfg.faq || []).forEach((f, i) => {
+    container.innerHTML += `
+      <div class="faq-admin-item" id="faq-item-${i}">
+        <div class="faq-num">Question ${i+1}</div>
+        <button class="faq-del" onclick="deleteFaq(${i})">×</button>
+        <div class="field"><label>Question</label><input type="text" id="faq-q-${i}" value="${(f.q||'').replace(/"/g,'&quot;')}"/></div>
+        <div class="field"><label>Answer</label><textarea id="faq-a-${i}" rows="3">${f.a||''}</textarea></div>
+      </div>`;
+  });
+  document.getElementById('d-faq').textContent = (cfg.faq || []).length;
+}
+
+function renderEligAdmin() {
+  const container = document.getElementById('eligAdminList');
+  container.innerHTML = '';
+  (cfg.eligibility || []).forEach((e, i) => {
+    container.innerHTML += `
+      <div class="elig-item" id="elig-item-${i}">
+        <div class="field" style="margin:0"><label>Title</label><input type="text" id="elig-title-${i}" value="${(e.title||'').replace(/"/g,'&quot;')}"/></div>
+        <div class="field" style="margin:0"><label>Description</label><input type="text" id="elig-desc-${i}" value="${(e.desc||'').replace(/"/g,'&quot;')}"/></div>
+        <button class="elig-del" onclick="deleteElig(${i})">×</button>
+      </div>`;
+  });
+  document.getElementById('d-elig').textContent = (cfg.eligibility || []).length;
+}
+
+function addFaq() {
+  cfg.faq = cfg.faq || [];
+  cfg.faq.push({ q: 'New Question', a: 'Answer here...' });
+  renderFaqAdmin();
+}
+
+function deleteFaq(i) {
+  cfg.faq.splice(i, 1);
+  renderFaqAdmin();
+}
+
+function addElig() {
+  cfg.eligibility = cfg.eligibility || [];
+  cfg.eligibility.push({ title: 'New Criteria', desc: 'Description here...' });
+  renderEligAdmin();
+}
+
+function deleteElig(i) {
+  cfg.eligibility.splice(i, 1);
+  renderEligAdmin();
+}
+
+function collectData() {
+  // Company
+  cfg.company = {
+    name: v('c-name'), tagline: v('c-tagline'),
+    phone: v('c-phone'), address: v('c-address'),
+    footerDesc: v('c-footerDesc')
+  };
+
+  // Hero
+  cfg.hero = {
+    badge: v('h-badge'), title: v('h-title'),
+    titleHighlight: v('h-titleHighlight'), titleSuffix: v('h-titleSuffix'),
+    subtitle: v('h-subtitle'), note: v('h-note')
+  };
+
+  // Products
+  cfg.products = (cfg.products || []).map((_, i) => ({
+    name: v(`p-name-${i}`), badge: v(`p-badge-${i}`),
+    amount: v(`p-amount-${i}`),
+    stat1Key: v(`p-s1k-${i}`), stat1Val: v(`p-s1v-${i}`)
+  }));
+
+  // Calculator
+  ['salary','emergency','personal'].forEach(key => {
+    cfg.calculator = cfg.calculator || {};
+    cfg.calculator[key] = {
+      min:  parseFloat(document.getElementById(`calc-${key}-min`)?.value) || 0,
+      max:  parseFloat(document.getElementById(`calc-${key}-max`)?.value) || 0,
+      mult: parseFloat(document.getElementById(`calc-${key}-mult`)?.value) || 0,
+      rate: parseFloat(document.getElementById(`calc-${key}-rate`)?.value) || 0,
+    };
+  });
+
+  // Footer brand (sync back to company)
+  cfg.company = cfg.company || {};
+  if (v('fc-name'))  cfg.company.name       = v('fc-name');
+  if (v('fc-phone')) cfg.company.phone      = v('fc-phone');
+  if (v('fc-desc'))  cfg.company.footerDesc = v('fc-desc');
+
+  // Footer
+  cfg.footer = {
+    quickLinks:  collectFooter('footerQLAdmin',    cfg.footer?.quickLinks),
+    legal:       collectFooter('footerLegalAdmin', cfg.footer?.legal),
+    serviceArea: v('f-serviceArea'),
+    copyright:   v('f-copyright'),
+  };
+
+  // Testimonials
+  cfg.testimonials = (cfg.testimonials || []).map((_, i) => ({
+    name:  document.getElementById(`tm-name-${i}`)?.value  || '',
+    city:  document.getElementById(`tm-city-${i}`)?.value  || '',
+    text:  document.getElementById(`tm-text-${i}`)?.value  || '',
+    stars: parseInt(document.getElementById(`tm-stars-${i}`)?.value) || 5,
+  }));
+
+  // FFT
+  cfg.fft = (cfg.fft || []).map((_, i) => ({
+    title: document.getElementById(`fft-title-${i}`)?.value || '',
+    desc:  document.getElementById(`fft-desc-${i}`)?.value  || '',
+  }));
+
+  // Features
+  cfg.features = (cfg.features || []).map((_, i) => ({
+    title: document.getElementById(`feat-title-${i}`)?.value || '',
+    desc:  document.getElementById(`feat-desc-${i}`)?.value  || ''
+  }));
+
+  // Steps
+  cfg.steps = (cfg.steps || []).map((_, i) => ({
+    title: document.getElementById(`step-title-${i}`)?.value || '',
+    desc:  document.getElementById(`step-desc-${i}`)?.value  || ''
+  }));
+
+  // FAQ
+  cfg.faq = (cfg.faq || []).map((_, i) => ({
+    q: document.getElementById(`faq-q-${i}`)?.value || '',
+    a: document.getElementById(`faq-a-${i}`)?.value || ''
+  }));
+
+  // Elig card
+  cfg.eligCard = { label:v('ec-label'), sub:v('ec-sub'), amount:v('ec-amount'), s1v:v('ec-s1v'), s1k:v('ec-s1k'), s2v:v('ec-s2v'), s2k:v('ec-s2k'), s3v:v('ec-s3v'), s3k:v('ec-s3k'), s4v:v('ec-s4v'), s4k:v('ec-s4k'), footer:v('ec-footer') };
+
+  // Eligibility
+  cfg.eligibility = (cfg.eligibility || []).map((_, i) => ({
+    title: document.getElementById(`elig-title-${i}`)?.value || '',
+    desc:  document.getElementById(`elig-desc-${i}`)?.value  || ''
+  }));
+
+  return cfg;
+}
+
+async function saveAll() {
+  const btn = document.getElementById('saveBtn');
+  btn.textContent = '⏳ Saving...';
+  btn.classList.add('saving');
+
+  const data = collectData();
+
+  try {
+    const res = await fetch('/api/config', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ...data, _password: adminPass })
+    });
+    if (res.status === 401) throw new Error('Wrong password');
+    const result = await res.json();
+    if (result.error) throw new Error(result.error);
+
+    const now = new Date().toLocaleTimeString('en-IN');
+    document.getElementById('d-saved').textContent = now;
+    document.getElementById('d-products').textContent = (cfg.products||[]).length;
+    document.getElementById('d-faq').textContent = (cfg.faq||[]).length;
+    document.getElementById('d-elig').textContent = (cfg.eligibility||[]).length;
+
+    const toast = document.getElementById('saveToast');
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 3000);
+  } catch(e) {
+    alert('Error saving: ' + e.message);
+  }
+
+  btn.textContent = '💾 Save Changes';
+  btn.classList.remove('saving');
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,138 @@
+{
+  "company": {
+    "name": "Baid Stock Broking",
+    "tagline": "RBI-Registered NBFC",
+    "phone": "+91-9355753533",
+    "address": "Wazirpur Industrial Area, Delhi, India",
+    "footerDesc": "RBI-Registered NBFC | Wazirpur Industrial Area, Delhi. Collateral-free loans, 100% digital KYC, transparent APR, same-day IMPS disbursal. Adherent to RBI Fair Practices Code."
+  },
+  "hero": {
+    "badge": "RBI-Registered NBFC | Wazirpur, Delhi | Pan-India Lending",
+    "title": "Smart Loans for",
+    "titleHighlight": "Every Financial Need",
+    "titleSuffix": "100% Digital",
+    "subtitle": "Salary Advance, Personal Loan, Business Loan, Emergency Loan &#8212; all collateral-free, fully digital, with same-day disbursal. Powered by Baid Stock Broking Services Pvt Ltd.",
+    "note": "Transparent APR &middot; No Prepayment Penalty &middot; Secure 256-bit Encryption"
+  },
+  "fft": [
+    { "title": "Fast", "desc": "We disburse loans to approved customers within the same day!" },
+    { "title": "Paperless", "desc": "100% digital process &#8212; zero physical documents required" },
+    { "title": "Trusted", "desc": "RBI-Approved NBFC &#8212; Baid Stock Broking Services Pvt Ltd" }
+  ],
+  "products": [
+    {
+      "name": "Salary Advance Loan",
+      "badge": "Most Popular",
+      "amount": "&#8377;5,000 &#8211; &#8377;1 Lakh",
+      "stat1Key": "Disbursal",
+      "stat1Val": "Same Day (IMPS)"
+    },
+    {
+      "name": "Personal Loan",
+      "badge": "Low Interest",
+      "amount": "&#8377;50,000 &#8211; &#8377;5 Lakh",
+      "stat1Key": "Processing",
+      "stat1Val": "100% Digital KYC"
+    },
+    {
+      "name": "Business Loan",
+      "badge": "MSME Friendly",
+      "amount": "&#8377;1 Lakh &#8211; &#8377;10 Lakh",
+      "stat1Key": "Collateral",
+      "stat1Val": "Not Required"
+    },
+    {
+      "name": "Emergency Loan",
+      "badge": "Instant Approval",
+      "amount": "&#8377;10,000 &#8211; &#8377;2 Lakh",
+      "stat1Key": "Approval",
+      "stat1Val": "Fast &amp; Instant"
+    }
+  ],
+  "footer": {
+    "quickLinks": [
+      { "text": "How It Works", "href": "#how-it-works" },
+      { "text": "Features",     "href": "#features" },
+      { "text": "Eligibility",  "href": "#eligibility" },
+      { "text": "FAQ",          "href": "#faq" }
+    ],
+    "legal": [
+      { "text": "Privacy Policy",      "href": "#" },
+      { "text": "Terms &amp; Conditions", "href": "#" },
+      { "text": "Loan Agreement",      "href": "#" },
+      { "text": "Grievance Policy",    "href": "#" }
+    ],
+    "serviceArea": "All India",
+    "copyright": "&#169; 2025 Baid Stock Broking Services Pvt Ltd | Wazirpur Industrial Area, Delhi, India | RBI-Registered NBFC | All loans subject to credit assessment and eligibility criteria."
+  },
+  "testimonials": [
+    { "name": "Rahul Kumar",  "city": "Delhi",     "stars": 5, "text": "Applied at 11 AM, money was in my account by 2 PM the same day. Absolutely seamless experience. No branch visits, no drama." },
+    { "name": "Priya Sharma", "city": "Noida",     "stars": 5, "text": "I needed &#8377;80,000 for a medical emergency. Baid Stock Broking Services approved it in 10 minutes. Very helpful and transparent." },
+    { "name": "Amit Mehta",   "city": "Gurgaon",   "stars": 5, "text": "Tried 3 other apps &#8212; all rejected me. Baid Stock Broking understood my situation and approved &#8377;1 lakh instantly. Best for salaried people." },
+    { "name": "Suresh Verma", "city": "Mumbai",    "stars": 5, "text": "The paperless process is a game-changer. Everything was done digitally, and I didn't have to visit any office or submit physical documents." },
+    { "name": "Neha Singh",   "city": "Bangalore", "stars": 5, "text": "Very user-friendly process with great customer support. The interest rates are fair and the repayment process is simple and stress-free." },
+    { "name": "Vikram Patel", "city": "Pune",      "stars": 5, "text": "Got my salary loan approved within minutes. The whole process was smooth and completely online. Highly recommend Baid Stock Broking Services." }
+  ],
+  "features": [
+    { "title": "Instant Credit Decision", "desc": "Our automated underwriting engine delivers real-time credit decisions based on your income and repayment capacity." },
+    { "title": "Data Privacy &amp; Security", "desc": "256-bit SSL encryption with strict data privacy compliance. Your financial information is never shared with third parties under any circumstances." },
+    { "title": "Minimal Documentation", "desc": "Only Aadhaar, PAN &amp; latest salary slip required. Our digital KYC pipeline verifies your identity in real time &#8212; no physical paperwork, no branch visits." },
+    { "title": "Transparent Fee Structure", "desc": "Full cost disclosure upfront &#8212; processing fee, APR, and total repayment shown before you sign. Zero hidden charges, zero prepayment penalty." },
+    { "title": "Income-Based Credit Limit", "desc": "Loan eligibility calculated on your net take-home salary. Choose repayment tenure of 7 to 40 days &#8212; structured around your salary disbursement cycle." },
+    { "title": "Borrower Support &amp; Grievance", "desc": "Dedicated borrower support in Hindi &amp; English. Adherence to RBI Fair Practices Code. Call +91-9355753533 for assistance or grievance resolution." }
+  ],
+  "steps": [
+    { "title": "Submit Loan Application", "desc": "Complete a quick digital application with basic employment and income details &#8212; takes under 2 minutes." },
+    { "title": "Complete Digital KYC", "desc": "Upload your Aadhaar, PAN &amp; salary slip for instant e-KYC verification. No physical documents needed." },
+    { "title": "Credit Assessment", "desc": "Our automated underwriting system evaluates your creditworthiness and income eligibility instantly." },
+    { "title": "Funds Disbursed", "desc": "Sanctioned loan amount transferred directly to your registered bank account via IMPS/NEFT &#8212; same day." }
+  ],
+  "calculator": {
+    "salary":    { "min": 5000,  "max": 100000, "mult": 0.8,  "rate": 0.00067 },
+    "emergency": { "min": 10000, "max": 200000, "mult": 2.0,  "rate": 0.00060 },
+    "personal":  { "min": 50000, "max": 500000, "mult": 10.0, "rate": 0.00045 }
+  },
+  "eligCard": {
+    "label": "Salary Loan",
+    "sub": "Baid Stock Broking Services",
+    "amount": "&#8377;5,000 &#8211; &#8377;1 Lakh",
+    "s1v": "Fast Approval", "s1k": "Quick Decision",
+    "s2v": "7 &#8211; 40 Days", "s2k": "Loan Tenure",
+    "s3v": "RBI Approved", "s3k": "Licensed NBFC",
+    "s4v": "Minimum", "s4k": "Paperwork",
+    "footer": "You are Pre-Approved &#8212; Apply Now"
+  },
+  "eligibility": [
+    { "title": "Salaried Employee",               "desc": "Working in a private company, MNC, or government sector" },
+    { "title": "Age: 21 &#8211; 58 Years",        "desc": "Must be within working age at the time of application" },
+    { "title": "Minimum Salary &#8377;25,000/month","desc": "Net take-home salary credited to bank account" },
+    { "title": "Valid Aadhaar &amp; PAN Card",    "desc": "Indian resident with valid KYC documents" },
+    { "title": "3 Months Employment",             "desc": "At least 3 months in current job" }
+  ],
+  "faq": [
+    {
+      "q": "What is the minimum salary required to apply?",
+      "a": "You must have a minimum net take-home salary of &#8377;25,000 per month, credited to your bank account. Your income-based credit limit determines the loan amount you are eligible for."
+    },
+    {
+      "q": "How quickly is the loan approved and disbursed?",
+      "a": "Our automated underwriting system delivers a credit decision quickly after application. Once approved, funds are transferred directly to your registered bank account via IMPS or NEFT &#8212; same business day."
+    },
+    {
+      "q": "What documents are required for digital KYC?",
+      "a": "Only three documents are needed: Aadhaar Card, PAN Card, and your latest salary slip. All documents are uploaded digitally &#8212; no physical copies or branch visits required."
+    },
+    {
+      "q": "Are there any prepayment charges or hidden fees?",
+      "a": "No prepayment penalties of any kind. We follow a full cost disclosure policy &#8212; the processing fee, APR, and total repayment amount are shown upfront before you accept any loan offer."
+    },
+    {
+      "q": "What is the applicable interest rate and APR?",
+      "a": "We offer competitive, transparent APR based on your salary, loan amount, and chosen tenure. All applicable charges are disclosed upfront in compliance with RBI Fair Practices Code guidelines."
+    },
+    {
+      "q": "Is my personal and financial data secure?",
+      "a": "Yes. We use 256-bit SSL encryption across all data transmissions. Your information is stored securely and is never sold or shared with any third party."
+    }
+  ]
+}
