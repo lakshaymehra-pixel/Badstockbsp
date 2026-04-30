@@ -54,7 +54,6 @@ function applyConfig(cfg) {
               <span class="product-stat-val">${p.stat1Val || ''}</span>
             </div>
           </div>
-          <!-- <a href="https://web-main-main.vercel.app/apply-now" target="_blank" class="product-cta">Apply Now &rarr;</a> -->
         </div>
       </div>`).join('');
   }
